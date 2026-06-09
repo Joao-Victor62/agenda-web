@@ -1,7 +1,9 @@
 package com.agenda.controller;
 
+import com.agenda.dto.ContatoCreateResponse;
+import com.agenda.dto.ContatoGetResponse;
 import com.agenda.model.Contato;
-import com.agenda.repository.ContatoRepository;
+import com.agenda.service.ContatoService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,30 +16,30 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class ContatoController {
 
-    private final ContatoRepository repository;
+    private final ContatoService contatoService;
 
-    public ContatoController(ContatoRepository repository) {
-        this.repository = repository;
+    public ContatoController(ContatoService contatoService) {
+        this.contatoService = contatoService;
     }
 
     // CREATE - Criar novo contato
     @PostMapping
-    public ResponseEntity<Contato> criar(@Valid @RequestBody Contato contato) {
-        Contato salvo = repository.save(contato);
-        return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+    public ResponseEntity<ContatoCreateResponse> criar(@Valid @RequestBody Contato contato) {
+        Contato salvo = contatoService.create(contato);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ContatoCreateResponse.fromEntity(contato));
     }
 
     // READ - Listar todos os contatos
     @GetMapping
-    public ResponseEntity<List<Contato>> listar() {
-        List<Contato> contatos = repository.findAllByOrderByNomeAsc();
-        return ResponseEntity.ok(contatos);
+    public ResponseEntity<List<ContatoGetResponse>> listar() {
+        List<Contato> contatos = contatoService.listAll();
+        return ResponseEntity.ok(contatos.stream().map(ContatoGetResponse::fromEntity).toList());
     }
 
     // READ - Buscar contato por ID
     @GetMapping("/{id}")
     public ResponseEntity<?> buscar(@PathVariable Long id) {
-        return repository.findById(id)
+        return contatoService.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(null));
@@ -47,13 +49,13 @@ public class ContatoController {
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id,
                                        @Valid @RequestBody Contato dados) {
-        return repository.findById(id)
+        return contatoService.findById(id)
                 .map(contato -> {
                     contato.setNome(dados.getNome());
                     contato.setTelefone(dados.getTelefone());
                     contato.setEmail(dados.getEmail());
                     contato.setEndereco(dados.getEndereco());
-                    return ResponseEntity.ok(repository.save(contato));
+                    return ResponseEntity.ok(contatoService.save(contato));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }

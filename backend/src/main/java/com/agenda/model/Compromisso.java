@@ -39,4 +39,6 @@ public class Compromisso {
 
     @Column(name = "criado_em")
     private LocalDateTime criadoEm = LocalDateTime.now();
+
+
 }

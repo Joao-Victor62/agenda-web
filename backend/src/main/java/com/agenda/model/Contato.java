@@ -31,9 +31,10 @@ public class Contato {
     @Column(length = 200)
     private String endereco;
 
-    @Column
-    private Caregoria
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
 
     @Column(name = "criado_em")
-    private LocalDateTime criadoEm = LocalDateTime.now();
+    private LocalDateTime criadoEm;
 }
