@@ -1,6 +1,6 @@
 package com.agenda.service;
 
-import com.agenda.model.Compromisso;
+import com.agenda.model.Atendimento;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class CompromissoService {
 
     @Transactional
-    public Compromisso create(){
+    public Atendimento create(){
 
     }
 }

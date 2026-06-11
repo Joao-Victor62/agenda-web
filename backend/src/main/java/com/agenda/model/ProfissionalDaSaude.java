@@ -6,8 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "atendimentos")
+@Table(name = "profissionalDaSaude")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,4 +35,7 @@ public class ProfissionalDaSaude {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
+
+    @Column(name = "data")
+    private LocalDateTime localDateTime;
 }

@@ -4,7 +4,7 @@ import com.agenda.model.ProfissionalDaSaude;
 
 import java.time.LocalDateTime;
 
-public record ContatoCreateRequest(
+public record ProfissionalDaSaudeRequest(
         String nome,
         String email,
         String telefone,

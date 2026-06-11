@@ -1,7 +1,7 @@
 package com.agenda;
 
 import com.agenda.controller.CompromissoController;
-import com.agenda.model.Compromisso;
+import com.agenda.model.Atendimento;
 import com.agenda.repository.CompromissoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Usa @WebMvcTest para testar apenas o controller isoladamente
  */
 @WebMvcTest(CompromissoController.class)
-class CompromissoControllerTest {
+class AtendimentoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,13 +46,13 @@ class CompromissoControllerTest {
 
     @Test
     void deveCriarCompromissoComSucesso() throws Exception {
-        Compromisso comp = new Compromisso();
+        Atendimento comp = new Atendimento();
         comp.setId(1L);
         comp.setTitulo("Reunião com cliente");
         comp.setData(LocalDate.of(2024, 12, 15));
         comp.setHora(LocalTime.of(14, 0));
 
-        when(repository.save(any(Compromisso.class))).thenReturn(comp);
+        when(repository.save(any(Atendimento.class))).thenReturn(comp);
 
         mockMvc.perform(post("/api/compromissos")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -63,12 +63,12 @@ class CompromissoControllerTest {
 
     @Test
     void deveListarCompromissosOrdenados() throws Exception {
-        Compromisso comp1 = new Compromisso();
+        Atendimento comp1 = new Atendimento();
         comp1.setId(1L);
         comp1.setTitulo("Reunião manhã");
         comp1.setData(LocalDate.of(2024, 12, 15));
 
-        Compromisso comp2 = new Compromisso();
+        Atendimento comp2 = new Atendimento();
         comp2.setId(2L);
         comp2.setTitulo("Almoço");
         comp2.setData(LocalDate.of(2024, 12, 15));

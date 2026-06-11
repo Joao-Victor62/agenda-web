@@ -1,7 +1,7 @@
 package com.agenda.controller;
 
-import com.agenda.dto.ContatoCreateResponse;
-import com.agenda.dto.ContatoGetResponse;
+import com.agenda.dto.ProfissionalDaSaudeResponse;
+import com.agenda.dto.ProfissionalDaSaudeGetResponse;
 import com.agenda.model.ProfissionalDaSaude;
 import com.agenda.service.ProfissionalDaSaudeService;
 import jakarta.validation.Valid;
@@ -24,16 +24,16 @@ public class ProfissionalDaSaudeController {
 
     // CREATE - Criar novo contato
     @PostMapping
-    public ResponseEntity<ContatoCreateResponse> criar(@Valid @RequestBody ProfissionalDaSaude profissionalDaSaude) {
+    public ResponseEntity<ProfissionalDaSaudeResponse> criar(@Valid @RequestBody ProfissionalDaSaude profissionalDaSaude) {
         ProfissionalDaSaude salvo = profissionalDaSaudeService.create(profissionalDaSaude);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ContatoCreateResponse.fromEntity(profissionalDaSaude));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProfissionalDaSaudeResponse.fromEntity(profissionalDaSaude));
     }
 
     // READ - Listar todos os contatos
     @GetMapping
-    public ResponseEntity<List<ContatoGetResponse>> listar() {
+    public ResponseEntity<List<ProfissionalDaSaudeGetResponse>> listar() {
         List<ProfissionalDaSaude> profissionalDaSaudes = profissionalDaSaudeService.listAll();
-        return ResponseEntity.ok(profissionalDaSaudes.stream().map(ContatoGetResponse::fromEntity).toList());
+        return ResponseEntity.ok(profissionalDaSaudes.stream().map(ProfissionalDaSaudeGetResponse::fromEntity).toList());
     }
 
     // READ - Buscar contato por ID

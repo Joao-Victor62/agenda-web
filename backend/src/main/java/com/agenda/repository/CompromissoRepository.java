@@ -1,17 +1,17 @@
 package com.agenda.repository;
 
-import com.agenda.model.Compromisso;
+import com.agenda.model.Atendimento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface CompromissoRepository extends JpaRepository<Compromisso, Long> {
+public interface CompromissoRepository extends JpaRepository<Atendimento, Long> {
 
-    List<Compromisso> findAllByOrderByDataAscHoraAsc();
+    List<Atendimento> findAllByOrderByDataAscHoraAsc();
 
-    List<Compromisso> findByDataOrderByHoraAsc(LocalDate data);
+    List<Atendimento> findByDataOrderByHoraAsc(LocalDate data);
 
-    List<Compromisso> findByContatoId(Long contatoId);
+    List<Atendimento> findByContatoId(Long contatoId);
 }

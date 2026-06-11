@@ -1,6 +1,6 @@
 package com.agenda.controller;
 
-import com.agenda.model.Compromisso;
+import com.agenda.model.Atendimento;
 import com.agenda.repository.CompromissoRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,16 +22,16 @@ public class CompromissoController {
 
     // CREATE - Criar novo compromisso
     @PostMapping
-    public ResponseEntity<Compromisso> criar(@Valid @RequestBody Compromisso compromisso) {
-        Compromisso salvo = repository.save(compromisso);
+    public ResponseEntity<Atendimento> criar(@Valid @RequestBody Atendimento atendimento) {
+        Atendimento salvo = repository.save(atendimento);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
     // READ - Listar todos os compromissos
     @GetMapping
-    public ResponseEntity<List<Compromisso>> listar() {
-        List<Compromisso> compromissos = repository.findAllByOrderByDataAscHoraAsc();
-        return ResponseEntity.ok(compromissos);
+    public ResponseEntity<List<Atendimento>> listar() {
+        List<Atendimento> atendimentos = repository.findAllByOrderByDataAscHoraAsc();
+        return ResponseEntity.ok(atendimentos);
     }
 
     // READ - Buscar compromisso por ID
@@ -46,7 +46,7 @@ public class CompromissoController {
     // UPDATE - Atualizar compromisso
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(@PathVariable Long id,
-                                       @Valid @RequestBody Compromisso dados) {
+                                       @Valid @RequestBody Atendimento dados) {
         return repository.findById(id)
                 .map(comp -> {
                     comp.setTitulo(dados.getTitulo());
