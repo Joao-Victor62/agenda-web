@@ -11,7 +11,7 @@ import java.time.LocalTime;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "profissionais_de_saude")
+@Table(name = "atendimentos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +30,7 @@ public class Atendimento {
     @Column(columnDefinition = "TEXT")
     private String problema;
 
-    @Column(columnDefinition = "TEXT")
-    private String receita;
+    @ManyToOne
+    @JoinColumn(name = "receita_id")
+    private Receita receita;
 }
