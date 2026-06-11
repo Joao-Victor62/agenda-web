@@ -2,16 +2,13 @@ package com.agenda.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "profissionais_de_saude")
+@Table(name = "atendimentos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,17 +18,20 @@ public class Profissional_de_saude {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Título é obrigatório")
-    @Column(length = 200, nullable = false)
+    @NotBlank(message = "Nome é obrigatório")
+    @Column(length = 100, nullable = false)
     private String nome;
 
-   @Column(columnDefinition = "TEXT")
-    private String endereco;
-
-    @Column(columnDefinition = "TEXT")
+    @Column(length = 20)
     private String telefone;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Column(length = 100)
+    private String email;
+
+    @Column(length = 200)
+    private String endereco;
+
+    @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 }
