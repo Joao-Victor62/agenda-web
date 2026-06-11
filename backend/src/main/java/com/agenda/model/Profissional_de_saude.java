@@ -11,11 +11,11 @@ import java.time.LocalTime;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "compromissos")
+@Table(name = "profissionais_de_saude")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Compromisso {
+public class Profissional_de_saude {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,22 +23,15 @@ public class Compromisso {
 
     @NotBlank(message = "Título é obrigatório")
     @Column(length = 200, nullable = false)
-    private String titulo;
+    private String nome;
 
-    @NotNull(message = "Data é obrigatória")
-    private LocalDate data;
-
-    private LocalTime hora;
+   @Column(columnDefinition = "TEXT")
+    private String endereco;
 
     @Column(columnDefinition = "TEXT")
-    private String descricao;
+    private String telefone;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "contato_id")
-    private Contato contato;
-
-    @Column(name = "criado_em")
-    private LocalDateTime criadoEm = LocalDateTime.now();
-
-
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
 }
