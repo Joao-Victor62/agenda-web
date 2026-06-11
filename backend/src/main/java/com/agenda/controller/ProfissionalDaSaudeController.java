@@ -1,5 +1,6 @@
 package com.agenda.controller;
 
+import com.agenda.dto.ProfissionalDaSaudeRequest;
 import com.agenda.dto.ProfissionalDaSaudeResponse;
 import com.agenda.dto.ProfissionalDaSaudeGetResponse;
 import com.agenda.model.ProfissionalDaSaude;
@@ -38,36 +39,24 @@ public class ProfissionalDaSaudeController {
 
     // READ - Buscar contato por ID
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscar(@PathVariable Long id) {
-        return profissionalDaSaudeService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(null));
+    public ResponseEntity<ProfissionalDaSaudeGetResponse> buscar(@PathVariable Long id) {
+        ProfissionalDaSaudeGetResponse response = ProfissionalDaSaudeGetResponse.fromEntity(profissionalDaSaudeService.get(id));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // UPDATE - Atualizar contato
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Long id,
-                                       @Valid @RequestBody ProfissionalDaSaude dados) {
-        return profissionalDaSaudeService.findById(id)
-                .map(contato -> {
-                    contato.setNome(dados.getNome());
-                    contato.setTelefone(dados.getTelefone());
-                    contato.setEmail(dados.getEmail());
-                    contato.setEndereco(dados.getEndereco());
-                    return ResponseEntity.ok(profissionalDaSaudeService.save(contato));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<ProfissionalDaSaudeGetResponse> atualizar(@PathVariable Long id,
+                                       @Valid @RequestBody ProfissionalDaSaudeRequest dados) {
+        ProfissionalDaSaude profissionalDaSaude = dados.toEntity();
+        ProfissionalDaSaudeGetResponse response =  ProfissionalDaSaudeGetResponse.fromEntity(profissionalDaSaudeService.update(profissionalDaSaude));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     // DELETE - Remover contato
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletar(@PathVariable Long id) {
-        return repository.findById(id)
-                .map(contato -> {
-                    repository.delete(contato);
-                    return ResponseEntity.ok(Map.of("mensagem", "Contato removido com sucesso"));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        profissionalDaSaudeService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
