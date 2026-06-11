@@ -1,7 +1,7 @@
 package com.agenda;
 
 import com.agenda.model.Compromisso;
-import com.agenda.model.Contato;
+import com.agenda.model.ProfissionalDaSaude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,9 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,15 +41,15 @@ class IntegracaoTest {
 
     @Test
     void deveExecutarFluxoCompletoContato() throws Exception {
-        // 1. CRIAR contato
-        Contato contato = new Contato();
-        contato.setNome("Maria Santos");
-        contato.setTelefone("31988887777");
-        contato.setEmail("maria@email.com");
+        // 1. CRIAR profissionalDaSaude
+        ProfissionalDaSaude profissionalDaSaude = new ProfissionalDaSaude();
+        profissionalDaSaude.setNome("Maria Santos");
+        profissionalDaSaude.setTelefone("31988887777");
+        profissionalDaSaude.setEmail("maria@email.com");
 
         MvcResult result = mockMvc.perform(post("/api/contatos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(contato)))
+                .content(objectMapper.writeValueAsString(profissionalDaSaude)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.nome").value("Maria Santos"))
                 .andReturn();
@@ -60,36 +57,36 @@ class IntegracaoTest {
         Long id = objectMapper.readTree(result.getResponse().getContentAsString())
                 .get("id").asLong();
 
-        // 2. BUSCAR contato criado
+        // 2. BUSCAR profissionalDaSaude criado
         mockMvc.perform(get("/api/contatos/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("maria@email.com"));
 
-        // 3. ATUALIZAR contato
-        contato.setNome("Maria Santos Silva");
-        contato.setEmail("maria.silva@email.com");
+        // 3. ATUALIZAR profissionalDaSaude
+        profissionalDaSaude.setNome("Maria Santos Silva");
+        profissionalDaSaude.setEmail("maria.silva@email.com");
 
         mockMvc.perform(put("/api/contatos/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(contato)))
+                .content(objectMapper.writeValueAsString(profissionalDaSaude)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome").value("Maria Santos Silva"));
 
-        // 4. DELETAR contato
+        // 4. DELETAR profissionalDaSaude
         mockMvc.perform(delete("/api/contatos/" + id))
                 .andExpect(status().isOk());
     }
 
     @Test
     void deveVincularCompromissoAContato() throws Exception {
-        // Criar contato
-        Contato contato = new Contato();
-        contato.setNome("Pedro Lima");
-        contato.setTelefone("31977776666");
+        // Criar profissionalDaSaude
+        ProfissionalDaSaude profissionalDaSaude = new ProfissionalDaSaude();
+        profissionalDaSaude.setNome("Pedro Lima");
+        profissionalDaSaude.setTelefone("31977776666");
 
         MvcResult contatoResult = mockMvc.perform(post("/api/contatos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(contato)))
+                .content(objectMapper.writeValueAsString(profissionalDaSaude)))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -102,7 +99,7 @@ class IntegracaoTest {
                 "titulo": "Almoço de negócios",
                 "data": "2024-12-20",
                 "hora": "12:00",
-                "contato": {"id": %d}
+                "profissionalDaSaude": {"id": %d}
             }
             """, contatoId);
 

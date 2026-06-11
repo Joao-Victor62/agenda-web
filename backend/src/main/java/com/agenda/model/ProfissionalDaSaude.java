@@ -5,14 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "atendimentos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Profissional_de_saude {
+public class ProfissionalDaSaude {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,7 +2,6 @@ package com.agenda;
 
 import com.agenda.controller.CompromissoController;
 import com.agenda.model.Compromisso;
-import com.agenda.model.Contato;
 import com.agenda.repository.CompromissoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

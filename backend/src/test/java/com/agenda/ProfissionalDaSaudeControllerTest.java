@@ -1,8 +1,8 @@
 package com.agenda;
 
-import com.agenda.controller.ContatoController;
-import com.agenda.model.Contato;
-import com.agenda.repository.ContatoRepository;
+import com.agenda.controller.ProfissionalDaSaudeController;
+import com.agenda.model.ProfissionalDaSaude;
+import com.agenda.repository.ProfissionalDaSaudeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,31 +24,31 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Usa @WebMvcTest para testar apenas o controller isoladamente
  * O repository é mockado com @MockBean
  */
-@WebMvcTest(ContatoController.class)
-class ContatoControllerTest {
+@WebMvcTest(ProfissionalDaSaudeController.class)
+class ProfissionalDaSaudeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private ContatoRepository repository;
+    private ProfissionalDaSaudeRepository repository;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
     void deveCriarContatoComSucesso() throws Exception {
-        Contato contato = new Contato();
-        contato.setId(1L);
-        contato.setNome("João Silva");
-        contato.setTelefone("31999999999");
-        contato.setEmail("joao@email.com");
+        ProfissionalDaSaude profissionalDaSaude = new ProfissionalDaSaude();
+        profissionalDaSaude.setId(1L);
+        profissionalDaSaude.setNome("João Silva");
+        profissionalDaSaude.setTelefone("31999999999");
+        profissionalDaSaude.setEmail("joao@email.com");
 
-        when(repository.save(any(Contato.class))).thenReturn(contato);
+        when(repository.save(any(ProfissionalDaSaude.class))).thenReturn(profissionalDaSaude);
 
         mockMvc.perform(post("/api/contatos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(contato)))
+                .content(objectMapper.writeValueAsString(profissionalDaSaude)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.nome").value("João Silva"))
                 .andExpect(jsonPath("$.email").value("joao@email.com"));
@@ -74,11 +74,11 @@ class ContatoControllerTest {
 
     @Test
     void deveDeletarContatoComSucesso() throws Exception {
-        Contato contato = new Contato();
-        contato.setId(1L);
-        contato.setNome("João Silva");
+        ProfissionalDaSaude profissionalDaSaude = new ProfissionalDaSaude();
+        profissionalDaSaude.setId(1L);
+        profissionalDaSaude.setNome("João Silva");
 
-        when(repository.findById(1L)).thenReturn(Optional.of(contato));
+        when(repository.findById(1L)).thenReturn(Optional.of(profissionalDaSaude));
 
         mockMvc.perform(delete("/api/contatos/1"))
                 .andExpect(status().isOk())

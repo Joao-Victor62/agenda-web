@@ -1,7 +1,6 @@
 package com.agenda.dto;
 
-import com.agenda.model.Categoria;
-import com.agenda.model.Contato;
+import com.agenda.model.ProfissionalDaSaude;
 
 public record ContatoGetResponse(String nome,
                                  String telefone,
@@ -9,11 +8,11 @@ public record ContatoGetResponse(String nome,
                                  String endereco,
                                  CategoriaDto Categoria) {
 
-    public static ContatoGetResponse fromEntity(Contato contato){
-        return new ContatoGetResponse(contato.getNome(),
-                contato.getTelefone(),
-                contato.getEmail(),
-                contato.getEndereco(),
-                new CategoriaDto(contato.getCategoria().toString()));
+    public static ContatoGetResponse fromEntity(ProfissionalDaSaude profissionalDaSaude){
+        return new ContatoGetResponse(profissionalDaSaude.getNome(),
+                profissionalDaSaude.getTelefone(),
+                profissionalDaSaude.getEmail(),
+                profissionalDaSaude.getEndereco(),
+                new CategoriaDto(profissionalDaSaude.getCategoria().toString()));
     }
 }
