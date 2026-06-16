@@ -13,8 +13,8 @@ services:
   - type: web
     name: agenda-backend
     runtime: docker
-    repo: https://github.com/laudares26/agenda-web
-    branch: deploy
+    repo: https://github.com/Joao-Victor62/agenda-web.git
+    branch: main
     rootDir: backend
     dockerfilePath: ./Dockerfile
     dockerContext: .
@@ -47,8 +47,8 @@ services:
   - type: web
     name: agenda-frontend
     runtime: static
-    repo: https://github.com/laudares26/agenda-web
-    branch: deploy
+    repo: https://github.com/Joao-Victor62/agenda-web.git
+    branch: main
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: build
