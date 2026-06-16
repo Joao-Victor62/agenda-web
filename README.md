@@ -57,8 +57,9 @@ npm test
 
 ## Divisão de Trabalho
 
-- **DEV 1 - Ana:** CRUD de Contatos (ContatoController + ContatoList/Form)
-- **DEV 2 - Bruno:** CRUD de Compromissos (CompromissoController + CompromissoList/Form)
+- **DEV 1 - Matheus de Oliveira Campello:** Desenvolvimento do backend e front-end
+- **DEV 2 - Henrique Saldanha Mendes Veloso:** Desenvolvimento do backend e front-end
+- **DEV 3 - João Victor Ferreira Pena:** Desenvolvimento do backend e front-end
 
 ## Apresentação
 
