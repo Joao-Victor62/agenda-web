@@ -60,30 +60,30 @@ function ProfissionalForm() {
       <h2>{id ? 'Editar Profissional' : 'Novo Profissional'}</h2>
       <form onSubmit={handleSubmit} className="form">
         <div className="form-group">
-          <label>Nome *</label>
-          <input type="text" value={profissional.nome} required
+          <label htmlFor="nome">Nome *</label>
+          <input id="nome" type="text" value={profissional.nome} required
             onChange={e => setProfissional({ ...profissional, nome: e.target.value })} />
         </div>
 
         <div className="form-group">
-          <label>Categoria *</label>
-          <input type="text" placeholder="Ex: Cardiologista, Pediatra..." value={profissional.categoria} required
+          <label htmlFor="categoria">Categoria *</label>
+          <input id="categoria" type="text" placeholder="Ex: Cardiologista, Pediatra..." value={profissional.categoria} required
             onChange={e => setProfissional({ ...profissional, categoria: e.target.value })} />
         </div>
 
         <div className="form-group">
-          <label>Telefone</label>
-          <input type="text" value={profissional.telefone}
+          <label htmlFor="telefone">Telefone</label>
+          <input id="telefone" type="text" value={profissional.telefone}
             onChange={e => setProfissional({ ...profissional, telefone: e.target.value })} />
         </div>
         <div className="form-group">
-          <label>Email</label>
-          <input type="email" value={profissional.email}
+          <label htmlFor="email">Email</label>
+          <input id="email" type="email" value={profissional.email}
             onChange={e => setProfissional({ ...profissional, email: e.target.value })} />
         </div>
         <div className="form-group">
-          <label>Endereço</label>
-          <input type="text" value={profissional.endereco}
+          <label htmlFor="endereco">Endereço</label>
+          <input id="endereco" type="text" value={profissional.endereco}
             onChange={e => setProfissional({ ...profissional, endereco: e.target.value })} />
         </div>
         <button type="submit" className="btn btn-primary">Salvar</button>

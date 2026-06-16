@@ -44,32 +44,31 @@ function AtendimentoForm() {
       <form onSubmit={handleSubmit} className="form">
 
         <div className="form-group">
-          <label>Data *</label>
-          <input type="date" value={atendimento.data} required
+          <label htmlFor="data">Data *</label>
+          <input id="data" type="date" value={atendimento.data} required
             onChange={e => setAtendimento({ ...atendimento, data: e.target.value })} />
         </div>
 
         <div className="form-group">
-          <label>Horário *</label>
-          <input type="time" value={atendimento.horario} required
+          <label htmlFor="horario">Horário *</label>
+          <input id="horario" type="time" value={atendimento.horario} required
             onChange={e => setAtendimento({ ...atendimento, horario: e.target.value })} />
         </div>
 
         <div className="form-group">
-          <label>Problema</label>
-          <textarea value={atendimento.problema}
+          <label htmlFor="problema">Problema</label>
+          <textarea id="problema" value={atendimento.problema}
             onChange={e => setAtendimento({ ...atendimento, problema: e.target.value })} />
         </div>
 
         <div className="form-group">
-          <label>Receita vinculada</label>
-          <select value={atendimento.receita?.id || ''}
+          <label htmlFor="receita">Receita vinculada</label>
+          <select id="receita" value={atendimento.receita?.id || ''}
             onChange={e => setAtendimento({
               ...atendimento,
               receita: e.target.value ? { id: parseInt(e.target.value) } : null
             })}>
             <option value="">Selecione uma receita</option>
-            {/* Mapeia a lista de receitas que vem do backend */}
             {receitas.map(r => (
               <option key={r.id} value={r.id}>Receita #{r.id}</option>
             ))}
