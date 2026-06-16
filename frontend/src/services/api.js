@@ -7,22 +7,27 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' }
 });
 
-// ========== CONTATOS (DEV 1 - Ana) ==========
-export const contatoService = {
+// O backend manteve a rota /contatos para os profissionais
+export const profissionalService = {
   listar: () => api.get('/contatos'),
   buscar: (id) => api.get(`/contatos/${id}`),
-  criar: (contato) => api.post('/contatos', contato),
-  atualizar: (id, contato) => api.put(`/contatos/${id}`, contato),
+  criar: (profissional) => api.post('/contatos', profissional),
+  atualizar: (id, profissional) => api.put(`/contatos/${id}`, profissional),
   deletar: (id) => api.delete(`/contatos/${id}`)
 };
 
-// ========== COMPROMISSOS (DEV 2 - Bruno) ==========
-export const compromissoService = {
-  listar: () => api.get('/compromissos'),
-  buscar: (id) => api.get(`/compromissos/${id}`),
-  criar: (compromisso) => api.post('/compromissos', compromisso),
-  atualizar: (id, compromisso) => api.put(`/compromissos/${id}`, compromisso),
-  deletar: (id) => api.delete(`/compromissos/${id}`)
+// Nova rota de Atendimentos
+export const atendimentoService = {
+  listar: () => api.get('/atendimentos'),
+  buscar: (id) => api.get(`/atendimentos/${id}`),
+  criar: (atendimento) => api.post('/atendimentos', atendimento),
+  atualizar: (id, atendimento) => api.put(`/atendimentos/${id}`, atendimento),
+  deletar: (id) => api.delete(`/atendimentos/${id}`)
+};
+
+// Rota de Receitas (apenas para listar no formulário)
+export const receitaService = {
+  listar: () => api.get('/receitas')
 };
 
 export default api;

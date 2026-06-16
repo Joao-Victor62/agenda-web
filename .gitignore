@@ -29,3 +29,9 @@ docker-compose.override.yml
 # OS
 .DS_Store
 Thumbs.db
+
+# Dependências do Frontend
+frontend/node_modules/
+
+# Compilados do Backend
+backend/target/
