@@ -115,7 +115,7 @@ jobs:
           # Testa se o frontend está acessível
           curl -f http://localhost:3000 || exit 1
           echo "✅ Testes de aceitação passaram!"
-          docker-compose down
+          docker compose down
 
       - name: 🔑 Login no AWS ECR
         uses: aws-actions/configure-aws-credentials@v4
