@@ -1,9 +1,16 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+// 1. Pegamos a variável que vem do Render ou usamos o localhost local
+let urlBase = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
+// 2. Se a URL vier do Render (sem o http), nós montamos o link completo
+if (!urlBase.startsWith('http')) {
+  urlBase = `https://${urlBase}/api`;
+}
+
+// 3. Criamos a conexão com o link consertado
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: urlBase,
   headers: { 'Content-Type': 'application/json' }
 });
 
