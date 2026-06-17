@@ -104,7 +104,7 @@ jobs:
 
       - name: 🐳 Build das imagens Docker
         run: |
-          docker-compose build
+          docker compose build
 
       - name: ✅ Testes de Aceitação (E2E)
         run: |
