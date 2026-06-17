@@ -108,7 +108,7 @@ jobs:
 
       - name: ✅ Testes de Aceitação (E2E)
         run: |
-          docker-compose up -d
+          docker compose up -d
           sleep 20
           # Testa se a API está respondendo
           curl -f http://localhost:8080/api/contatos || exit 1
