@@ -1,8 +1,7 @@
 package com.agenda;
 
-import com.agenda.model.ProfissionalDaSaude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.agenda.repository.CategoriaRepository;
+import com.agenda.repository.ProfissionalDaSaudeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,17 +10,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * TESTES DE INTEGRAÇÃO
- * Usa @SpringBootTest para carregar todo o contexto da aplicação
- * Testa a integração real entre Controller → Service → Repository → Banco
- * No CI, roda com PostgreSQL real via container
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -30,82 +26,100 @@ class IntegracaoTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper;
+    @Autowired
+    private ProfissionalDaSaudeRepository profissionalDaSaudeRepository;
+
+    @Autowired
+    private CategoriaRepository categoriaRepository;
 
     @BeforeEach
-    void setup() {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+    void limparBanco() {
+        profissionalDaSaudeRepository.deleteAll();
+        categoriaRepository.deleteAll();
     }
 
     @Test
-    void deveExecutarFluxoCompletoContato() throws Exception {
-        // 1. CRIAR profissionalDaSaude
-        ProfissionalDaSaude profissionalDaSaude = new ProfissionalDaSaude();
-        profissionalDaSaude.setNome("Maria Santos");
-        profissionalDaSaude.setTelefone("31988887777");
-        profissionalDaSaude.setEmail("maria@email.com");
+    void deveExecutarFluxoCompletoProfissionalDaSaude() throws Exception {
+        String profissionalJson = """
+                {
+                  "nome": "Maria Santos",
+                  "telefone": "31988887777",
+                  "email": "maria@email.com",
+                  "endereco": "Rua A",
+                  "categoria": {
+                    "categoria": "Cardiologista"
+                  }
+                }
+                """;
 
-        MvcResult result = mockMvc.perform(post("/api/contatos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profissionalDaSaude)))
+        String response = mockMvc.perform(post("/api/contatos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(profissionalJson))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.nome").value("Maria Santos"))
-                .andReturn();
+                .andExpect(jsonPath("$.Categoria.categoria").value("Cardiologista"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-        Long id = objectMapper.readTree(result.getResponse().getContentAsString())
-                .get("id").asLong();
+        String id = response.replaceAll(".*\"id\":(\\d+).*", "$1");
 
-        // 2. BUSCAR profissionalDaSaude criado
         mockMvc.perform(get("/api/contatos/" + id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("maria@email.com"));
+                .andExpect(jsonPath("$.nome").value("Maria Santos"))
+                .andExpect(jsonPath("$.Categoria.categoria").value("Cardiologista"));
 
-        // 3. ATUALIZAR profissionalDaSaude
-        profissionalDaSaude.setNome("Maria Santos Silva");
-        profissionalDaSaude.setEmail("maria.silva@email.com");
+        String profissionalAtualizadoJson = """
+                {
+                  "nome": "Maria Santos Silva",
+                  "telefone": "31988887777",
+                  "email": "maria.silva@email.com",
+                  "endereco": "Rua B",
+                  "categoria": {
+                    "categoria": "Dermatologista"
+                  }
+                }
+                """;
 
         mockMvc.perform(put("/api/contatos/" + id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profissionalDaSaude)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(profissionalAtualizadoJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.nome").value("Maria Santos Silva"));
+                .andExpect(jsonPath("$.nome").value("Maria Santos Silva"))
+                .andExpect(jsonPath("$.Categoria.categoria").value("Dermatologista"));
 
-        // 4. DELETAR profissionalDaSaude
         mockMvc.perform(delete("/api/contatos/" + id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 
     @Test
-    void deveVincularCompromissoAContato() throws Exception {
-        // Criar profissionalDaSaude
-        ProfissionalDaSaude profissionalDaSaude = new ProfissionalDaSaude();
-        profissionalDaSaude.setNome("Pedro Lima");
-        profissionalDaSaude.setTelefone("31977776666");
-
-        MvcResult contatoResult = mockMvc.perform(post("/api/contatos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(profissionalDaSaude)))
+    void deveCriarCategoriaEUsarNoProfissional() throws Exception {
+        mockMvc.perform(post("/api/categorias")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "categoria": "Psicólogo"
+                                }
+                                """))
                 .andExpect(status().isCreated())
-                .andReturn();
+                .andExpect(jsonPath("$.categoria").value("Psicólogo"));
 
-        Long contatoId = objectMapper.readTree(
-                contatoResult.getResponse().getContentAsString()).get("id").asLong();
-
-        // Criar compromisso vinculado
-        String compJson = String.format("""
-            {
-                "titulo": "Almoço de negócios",
-                "data": "2024-12-20",
-                "hora": "12:00",
-                "profissionalDaSaude": {"id": %d}
-            }
-            """, contatoId);
-
-        mockMvc.perform(post("/api/compromissos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(compJson))
+        mockMvc.perform(post("/api/contatos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "nome": "Pedro Lima",
+                                  "telefone": "31977776666",
+                                  "email": "pedro@email.com",
+                                  "endereco": "Rua C",
+                                  "categoria": {
+                                    "categoria": "Psicólogo"
+                                  }
+                                }
+                                """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.titulo").value("Almoço de negócios"));
+                .andExpect(jsonPath("$.nome").value("Pedro Lima"))
+                .andExpect(jsonPath("$.Categoria.categoria").value("Psicólogo"));
     }
 }

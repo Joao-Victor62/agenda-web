@@ -1,16 +1,15 @@
 package com.agenda.controller;
 
-import com.agenda.dto.ProfissionalDaSaudeRequest;
-import com.agenda.dto.ProfissionalDaSaudeResponse;
 import com.agenda.dto.ProfissionalDaSaudeGetResponse;
+import com.agenda.dto.ProfissionalDaSaudeRequest;
 import com.agenda.model.ProfissionalDaSaude;
 import com.agenda.service.ProfissionalDaSaudeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contatos")
@@ -23,40 +22,48 @@ public class ProfissionalDaSaudeController {
         this.profissionalDaSaudeService = profissionalDaSaudeService;
     }
 
-    // CREATE - Criar novo contato
     @PostMapping
-    public ResponseEntity<ProfissionalDaSaudeResponse> criar(@Valid @RequestBody ProfissionalDaSaude profissionalDaSaude) {
+    public ResponseEntity<ProfissionalDaSaudeGetResponse> criar(
+            @Valid @RequestBody ProfissionalDaSaudeRequest dados
+    ) {
+        ProfissionalDaSaude profissionalDaSaude = dados.toEntity();
         ProfissionalDaSaude salvo = profissionalDaSaudeService.create(profissionalDaSaude);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ProfissionalDaSaudeResponse.fromEntity(profissionalDaSaude));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(ProfissionalDaSaudeGetResponse.fromEntity(salvo));
     }
 
-    // READ - Listar todos os contatos
     @GetMapping
     public ResponseEntity<List<ProfissionalDaSaudeGetResponse>> listar() {
-        List<ProfissionalDaSaude> profissionalDaSaudes = profissionalDaSaudeService.listAll();
-        return ResponseEntity.ok(profissionalDaSaudes.stream().map(ProfissionalDaSaudeGetResponse::fromEntity).toList());
+        List<ProfissionalDaSaudeGetResponse> profissionais = profissionalDaSaudeService.listAll()
+                .stream()
+                .map(ProfissionalDaSaudeGetResponse::fromEntity)
+                .toList();
+
+        return ResponseEntity.ok(profissionais);
     }
 
-    // READ - Buscar contato por ID
     @GetMapping("/{id}")
     public ResponseEntity<ProfissionalDaSaudeGetResponse> buscar(@PathVariable Long id) {
-        ProfissionalDaSaudeGetResponse response = ProfissionalDaSaudeGetResponse.fromEntity(profissionalDaSaudeService.get(id));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        ProfissionalDaSaude profissionalDaSaude = profissionalDaSaudeService.get(id);
+        return ResponseEntity.ok(ProfissionalDaSaudeGetResponse.fromEntity(profissionalDaSaude));
     }
 
-    // UPDATE - Atualizar contato
     @PutMapping("/{id}")
-    public ResponseEntity<ProfissionalDaSaudeGetResponse> atualizar(@PathVariable Long id,
-                                       @Valid @RequestBody ProfissionalDaSaudeRequest dados) {
+    public ResponseEntity<ProfissionalDaSaudeGetResponse> atualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody ProfissionalDaSaudeRequest dados
+    ) {
         ProfissionalDaSaude profissionalDaSaude = dados.toEntity();
-        ProfissionalDaSaudeGetResponse response =  ProfissionalDaSaudeGetResponse.fromEntity(profissionalDaSaudeService.update(profissionalDaSaude));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        ProfissionalDaSaude atualizado = profissionalDaSaudeService.update(id, profissionalDaSaude);
+
+        return ResponseEntity.ok(ProfissionalDaSaudeGetResponse.fromEntity(atualizado));
     }
 
-    // DELETE - Remover contato
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         profissionalDaSaudeService.delete(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }

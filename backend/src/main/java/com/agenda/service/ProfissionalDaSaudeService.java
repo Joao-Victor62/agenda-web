@@ -1,43 +1,64 @@
 package com.agenda.service;
 
+import com.agenda.model.Categoria;
 import com.agenda.model.ProfissionalDaSaude;
 import com.agenda.repository.ProfissionalDaSaudeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class ProfissionalDaSaudeService {
 
-    ProfissionalDaSaudeRepository profissionalDaSaudeRepository;
+    private final ProfissionalDaSaudeRepository profissionalDaSaudeRepository;
+    private final CategoriaService categoriaService;
 
-    public ProfissionalDaSaudeService(ProfissionalDaSaudeRepository profissionalDaSaudeRepository){
+    public ProfissionalDaSaudeService(
+            ProfissionalDaSaudeRepository profissionalDaSaudeRepository,
+            CategoriaService categoriaService
+    ) {
         this.profissionalDaSaudeRepository = profissionalDaSaudeRepository;
+        this.categoriaService = categoriaService;
     }
 
-    public ProfissionalDaSaude create(ProfissionalDaSaude profissionalDaSaude){
+    @Transactional
+    public ProfissionalDaSaude create(ProfissionalDaSaude profissionalDaSaude) {
+        Categoria categoria = categoriaService.findOrCreate(profissionalDaSaude.getCategoria());
+        profissionalDaSaude.setCategoria(categoria);
+
         return profissionalDaSaudeRepository.save(profissionalDaSaude);
     }
 
-    public List<ProfissionalDaSaude> listAll(){
+    @Transactional(readOnly = true)
+    public List<ProfissionalDaSaude> listAll() {
         return profissionalDaSaudeRepository.findAllByOrderByNomeAsc();
     }
 
-    public ProfissionalDaSaude update(ProfissionalDaSaude profissionalDaSaude){
-        ProfissionalDaSaude dbData = this.get(profissionalDaSaude.getId());
-        dbData.setNome(profissionalDaSaude.getNome());
-        dbData.setEmail(profissionalDaSaude.getEmail());
-        dbData.setTelefone(profissionalDaSaude.getTelefone());
-        dbData.setCategoria(profissionalDaSaude.getCategoria());
-        dbData.setEndereco(profissionalDaSaude.getEndereco());
-        return dbData;
+    @Transactional(readOnly = true)
+    public ProfissionalDaSaude get(Long id) {
+        return profissionalDaSaudeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Profissional da saúde não encontrado"));
     }
 
+    @Transactional
+    public ProfissionalDaSaude update(Long id, ProfissionalDaSaude dados) {
+        ProfissionalDaSaude profissional = get(id);
 
-    public ProfissionalDaSaude get(Long id){return profissionalDaSaudeRepository.findById(id).orElseThrow(() -> new RuntimeException("ERRO 404: Objeto não encontrado"));}
+        profissional.setNome(dados.getNome());
+        profissional.setEmail(dados.getEmail());
+        profissional.setTelefone(dados.getTelefone());
+        profissional.setEndereco(dados.getEndereco());
 
-    public void delete(Long id){
-        if (this.get(id) != null)
-            profissionalDaSaudeRepository.deleteById(id);
+        Categoria categoria = categoriaService.findOrCreate(dados.getCategoria());
+        profissional.setCategoria(categoria);
+
+        return profissionalDaSaudeRepository.save(profissional);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        ProfissionalDaSaude profissional = get(id);
+        profissionalDaSaudeRepository.delete(profissional);
     }
 }

@@ -1,15 +1,15 @@
 package com.agenda;
 
-import com.agenda.controller.CompromissoController;
+import com.agenda.controller.AtendimentoController;
 import com.agenda.model.Atendimento;
-import com.agenda.repository.CompromissoRepository;
+import com.agenda.repository.AtendimentoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockbean.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,18 +23,14 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * TESTES UNITÁRIOS - Compromissos (DEV 2 - Bruno)
- * Usa @WebMvcTest para testar apenas o controller isoladamente
- */
-@WebMvcTest(CompromissoController.class)
+@WebMvcTest(AtendimentoController.class)
 class AtendimentoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private CompromissoRepository repository;
+    private AtendimentoRepository repository;
 
     private ObjectMapper objectMapper;
 
@@ -45,48 +41,50 @@ class AtendimentoControllerTest {
     }
 
     @Test
-    void deveCriarCompromissoComSucesso() throws Exception {
-        Atendimento comp = new Atendimento();
-        comp.setId(1L);
-        comp.setTitulo("Reunião com cliente");
-        comp.setData(LocalDate.of(2024, 12, 15));
-        comp.setHora(LocalTime.of(14, 0));
+    void deveCriarAtendimentoComSucesso() throws Exception {
+        Atendimento atendimento = new Atendimento();
+        atendimento.setId(1L);
+        atendimento.setData(LocalDate.of(2024, 12, 15));
+        atendimento.setHorario(LocalTime.of(14, 0));
+        atendimento.setProblema("Dor de cabeça");
 
-        when(repository.save(any(Atendimento.class))).thenReturn(comp);
+        when(repository.save(any(Atendimento.class))).thenReturn(atendimento);
 
-        mockMvc.perform(post("/api/compromissos")
+        mockMvc.perform(post("/api/atendimentos")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(comp)))
+                .content(objectMapper.writeValueAsString(atendimento)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.titulo").value("Reunião com cliente"));
+                .andExpect(jsonPath("$.problema").value("Dor de cabeça"));
     }
 
     @Test
-    void deveListarCompromissosOrdenados() throws Exception {
-        Atendimento comp1 = new Atendimento();
-        comp1.setId(1L);
-        comp1.setTitulo("Reunião manhã");
-        comp1.setData(LocalDate.of(2024, 12, 15));
+    void deveListarAtendimentosOrdenados() throws Exception {
+        Atendimento a1 = new Atendimento();
+        a1.setId(1L);
+        a1.setData(LocalDate.of(2024, 12, 15));
+        a1.setHorario(LocalTime.of(9, 0));
+        a1.setProblema("Consulta 1");
 
-        Atendimento comp2 = new Atendimento();
-        comp2.setId(2L);
-        comp2.setTitulo("Almoço");
-        comp2.setData(LocalDate.of(2024, 12, 15));
+        Atendimento a2 = new Atendimento();
+        a2.setId(2L);
+        a2.setData(LocalDate.of(2024, 12, 15));
+        a2.setHorario(LocalTime.of(10, 0));
+        a2.setProblema("Consulta 2");
 
-        when(repository.findAllByOrderByDataAscHoraAsc())
-                .thenReturn(Arrays.asList(comp1, comp2));
+        when(repository.findAllByOrderByDataAscHorarioAsc())
+                .thenReturn(Arrays.asList(a1, a2));
 
-        mockMvc.perform(get("/api/compromissos"))
+        mockMvc.perform(get("/api/atendimentos"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].titulo").value("Reunião manhã"))
-                .andExpect(jsonPath("$[1].titulo").value("Almoço"));
+                .andExpect(jsonPath("$[0].problema").value("Consulta 1"))
+                .andExpect(jsonPath("$[1].problema").value("Consulta 2"));
     }
 
     @Test
-    void deveRetornar404ParaCompromissoInexistente() throws Exception {
+    void deveRetornar404ParaAtendimentoInexistente() throws Exception {
         when(repository.findById(999L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/compromissos/999"))
+        mockMvc.perform(get("/api/atendimentos/999"))
                 .andExpect(status().isNotFound());
     }
 }
